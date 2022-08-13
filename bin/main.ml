@@ -47,7 +47,6 @@ module List = struct
   let first = abstraction [ "p" ] (application [ Var "p"; Bool.true_ ])
   let second = abstraction [ "p" ] (application [ Var "p"; Bool.false_ ])
   let nil = application [ pair; Bool.true_; Bool.true_ ]
-  let isnil = fun p -> application [ first; p ]
   let cons = abstraction [ "a"; "b" ] (application [ pair; Bool.false_; application [ pair; Var "a"; Var "b" ] ])
   let head = abstraction [ "p" ] (application [ first; application [ second; Var "p" ] ])
   let tail = abstraction [ "p" ] (application [ second; application [ second; Var "p" ] ])
