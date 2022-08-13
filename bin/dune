@@ -1,0 +1,5 @@
+(executable
+ (public_name hai)
+ (name main)
+ (libraries hai) 
+ (preprocess (pps ppx_deriving.show)))

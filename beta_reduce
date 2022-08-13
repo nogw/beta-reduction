@@ -1,0 +1,40 @@
+module Beta = struct
+  open Tree
+
+  let rec ids = function
+    | Var var -> [ var ]
+    | Abs (param, body) -> param :: ids body
+    | App (lambda, arg) -> ids lambda @ ids arg
+
+  let unused e x =
+    let used = ids e in
+    let rec aux n =
+      let id = x ^ string_of_int n in
+      if List.mem id used then aux (succ n) else id
+    in aux 0
+
+  let rec occurs_free var = function
+    | Abs (param, _) when param = var -> false
+    | Abs (param, body) -> occurs_free param body
+    | App (lambda, arg) -> occurs_free var lambda || occurs_free var arg
+    | Var v -> v = var
+
+  let rec reduce expr =
+    match expr with
+    | App (Abs (param, body), arg) -> reduce (substitution body param arg)
+    | App (App (Var _, _), _) -> expr
+    | App ((App _ as app), arg) -> reduce (App (reduce app, arg))
+    | _ -> expr
+
+  and substitution expr var sub =
+    match expr with
+    | Abs (param, _) when param = var -> expr
+    | Abs (param, body) when occurs_free param sub ->
+        let param0 = unused body param in
+        let body0 = substitution body param (Var param0) in
+        Abs (param0, substitution body0 var sub)
+    | Abs (param, body) -> Abs (param, substitution body var sub)
+    | App (lambda, arg) -> App (substitution lambda var sub, substitution arg var sub)
+    | Var v when v = var -> sub
+    | Var _ -> expr
+end
