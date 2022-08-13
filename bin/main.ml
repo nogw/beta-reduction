@@ -44,7 +44,6 @@ end
 
 module List = struct
   let pair = abstraction [ "x"; "y"; "z" ] (application [ Var "z"; Var "x"; Var "y" ])
-  let app_pair x y = application [ pair; x; y ]
   let first = abstraction [ "p" ] (application [ Var "p"; Bool.true_ ])
   let second = abstraction [ "p" ] (application [ Var "p"; Bool.false_ ])
   let nil = application [ pair; Bool.true_; Bool.true_ ]
